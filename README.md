@@ -1,13 +1,13 @@
 # op-connect-secret-driver
-#### _git remote add origin (1PasswordConnectServer)_
+#### _A Docker Secret driver for [1Password Connect][1PasswordConnectServer]_
 
-This Docker Secret driver plugin integrates with **[1Password Connect server](1PasswordConnectServer)** to securely manage secrets in Docker Swarm.
+This Docker Secret driver plugin integrates with **[1Password Connect server][1PasswordConnectServer** to securely manage secrets in Docker Swarm.
 
 ## Requirements
 
 * Docker Engine with Swarm mode enabled
 * Docker Secret driver support
-* [1Password Connect server](1PasswordConnectServer) setup and running
+* [1Password Connect server][1PasswordConnectServer] setup and running
 * 1Password Connect Token
 * `1password-credentials.json` file in [data/1password-credentials.json](data/1password-credentials.json)
 
@@ -84,7 +84,7 @@ docker plugin remove op-connect-secret-driver:latest
 
 ### Connection to 1Password Connect
 
-The SDK requires these environment variables to connect to [1Password Connect](1PasswordConnectServer):
+The SDK requires these environment variables to connect to [1Password Connect][1PasswordConnectServer]:
 
 * `OP_CONNECT_HOST`: URL of your 1Password Connect server
 * `OP_CONNECT_TOKEN`: Your 1Password Connect authentication token
@@ -100,12 +100,12 @@ docker plugin set op-connect-secret-driver:latest OP_CONNECT_TOKEN=your-1passwor
 
 The plugin supports two ways to reference secrets:
 1. Individual fields using `vault`, `item`, and optional `field` provided as secret labels
-2. [1Password](1Password) URL format using the `ref` as secret label in the format `op://vault/item/field` 
-  (that you can copy from [1Password](1Password) directly)
+2. [1Password][1Password] URL format using the `ref` as secret label in the format `op://vault/item/field` 
+  (that you can copy from [1Password][1Password] directly)
 
 Notes:
 - The `field` parameter is optional and defaults to "password" if not specified
-- The plugin can retrieve both field values and file contents from [1Password](1Password) items
+- The plugin can retrieve both field values and file contents from [1Password][1Password] items
 - All configuration is done through labels
 
 Example Docker Compose configurations:
@@ -140,7 +140,7 @@ docker plugin ls
 docker plugin inspect op-connect-secret-driver:latest
 ```
 
-3. Ensure [1Password Connect server](1PasswordConnectServer) is accessible at configured host
+3. Ensure [1Password Connect server][1PasswordConnectServer] is accessible at configured host
 
 [1PasswordConnectServer]: https://developer.1password.com/docs/connect/get-started/
 [1Password]: https://1password.com
