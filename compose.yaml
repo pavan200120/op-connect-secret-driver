@@ -1,0 +1,51 @@
+services:
+
+  op-connect-api:
+    image: 1password/connect-api:latest
+    depends_on:
+      op-connect-sync:
+        condition: service_started
+    ports:
+      - "17450:8080"
+    secrets:
+      - source: 1passwordCredentials
+        target: /home/opuser/.op/1password-credentials.json
+    networks:
+      overlay_network:
+    volumes:
+      - data:/home/opuser/.op/data
+
+  op-connect-sync:
+    image: 1password/connect-sync:latest
+    ports:
+      - "17451:8080"
+    secrets:
+      - source: 1passwordCredentials
+        target: /home/opuser/.op/1password-credentials.json
+    networks:
+      overlay_network:
+    volumes:
+      - data:/home/opuser/.op/data
+
+  op-connect-secret-driver:
+    image: op-connect-secret-driver:latest
+    build:
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    networks:
+      overlay_network:
+
+networks:
+  overlay_network:
+
+volumes:
+  data:
+
+secrets:
+  1passwordCredentials:
+    file: data/1password-credentials.json
+  opConnectHost:
+    environment: OP_CONNECT_HOST
+  opConnectToken:
+    environment: OP_CONNECT_TOKEN

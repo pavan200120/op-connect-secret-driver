@@ -1,0 +1,48 @@
+services:
+  test-service:
+    image: alpine
+    command: |
+      sh -c "echo 'All secrets echoed:' && \
+            echo Username: $$(cat /run/secrets/username) && \
+            echo Password: $$(cat /run/secrets/password) && \
+            echo readme: $$(cat /run/secrets/readme) && \
+            echo compose_yaml_by_attributes: $$(cat /run/secrets/compose_yaml_by_attributes) && \
+            echo compose_yaml_by_ref: $$(cat /run/secrets/compose_yaml_by_ref) && \
+            echo 'All secrets echoed:' && \
+            sleep infinity"
+    secrets:
+      - username
+      - password
+      - readme
+      - compose_yaml_by_ref
+      - compose_yaml_by_attributes
+
+secrets:
+  username:
+    driver: op-connect-secret-driver:latest
+    labels:
+      ref: "op://Test/Test Secret/username"
+
+  password:
+    driver: op-connect-secret-driver:latest
+    labels:
+      vault: "Test"
+      item: "Test Secret"
+      field: "password"
+
+  readme:
+    driver: op-connect-secret-driver:latest
+    labels:
+      ref: "op://Test/README/README.md"
+
+  compose_yaml_by_attributes:
+    driver: op-connect-secret-driver:latest
+    labels:
+      vault: "Test"
+      item: "test docker"
+      field: "compose.yml"
+
+  compose_yaml_by_ref:
+    driver: op-connect-secret-driver:latest
+    labels:
+      ref: "op://Test/test docker/compose.yml"
