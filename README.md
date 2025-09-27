@@ -51,12 +51,12 @@ docker plugin set op-connect-secret-driver:latest OP_CONNECT_HOST=http://localho
 docker plugin set op-connect-secret-driver:latest OP_CONNECT_TOKEN=your-1password-connect-token
 ```
 
-4. Start 1Password Connect services:
+3. Start 1Password Connect services:
 ```shell
 docker compose up op-connect-api
 ```
 
-5. Enable the plugin:
+4. Enable the plugin:
 ```shell
 docker plugin enable op-connect-secret-driver:latest
 ```
