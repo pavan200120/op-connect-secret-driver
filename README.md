@@ -51,11 +51,6 @@ docker plugin set op-connect-secret-driver:latest OP_CONNECT_HOST=http://localho
 docker plugin set op-connect-secret-driver:latest OP_CONNECT_TOKEN=your-1password-connect-token
 ```
 
-3. Verify configuration:
-```shell
-docker plugin inspect op-connect-secret-driver:latest -f "{{ .Settings.Env }}"
-```
-
 4. Start 1Password Connect services:
 ```shell
 docker compose up op-connect-api
@@ -135,12 +130,17 @@ secrets:
 docker plugin ls
 ```
 
-2. Check plugin logs:
+2. Check plugin logs (syslog) or inspect it:
 ```shell
 docker plugin inspect op-connect-secret-driver:latest
 ```
 
-3. Ensure [1Password Connect server][1PasswordConnectServer] is accessible at configured host
+3. Verify configuration:
+```shell
+docker plugin inspect op-connect-secret-driver:latest -f "{{ .Settings.Env }}"
+```
+
+4. Ensure [1Password Connect server][1PasswordConnectServer] is accessible at the configured host
 
 [1PasswordConnectServer]: https://developer.1password.com/docs/connect/get-started/
 [1Password]: https://1password.com
