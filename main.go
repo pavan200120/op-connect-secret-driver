@@ -18,11 +18,11 @@ type OPConnectSecretDriver struct {
 func newDriver() (*OPConnectSecretDriver, error) {
 	client, err := connect.NewClientFromEnvironment()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[OPCSD] failed to create 1Password Connect client %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "[OPCSD] failed to create 1Password Connect client %v\n", err)
 		return nil, fmt.Errorf("[OPCSD] failed to create 1Password Connect client: %v", err)
 	}
 
-	fmt.Fprintf(os.Stdout, "[OPCSD] plugin initialized\n")
+	_, _ = fmt.Fprintf(os.Stdout, "[OPCSD] plugin initialized\n")
 
 	return &OPConnectSecretDriver{client: client}, nil
 }
@@ -68,7 +68,7 @@ func parseOpURL(url string) (vault, item, field string, err error) {
 //		  labels:
 //		    ref: "op://Test/Test Secret/username"
 func (driver *OPConnectSecretDriver) Get(req secrets.Request) secrets.Response {
-	fmt.Fprintf(os.Stdout, "[OPCSD] Getting secrets for req %s %v\n", req.SecretName, req.SecretLabels)
+	_, _ = fmt.Fprintf(os.Stdout, "[OPCSD] Getting secrets for req %s %v\n", req.SecretName, req.SecretLabels)
 
 	var client = driver.client
 	var vault, item, field string
@@ -78,7 +78,7 @@ func (driver *OPConnectSecretDriver) Get(req secrets.Request) secrets.Response {
 		var err error
 		vault, item, field, err = parseOpURL(ref)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "[OPCSD] failed to parse 1Password URL: %v\n", err)
+			_, _ = fmt.Fprintf(os.Stderr, "[OPCSD] failed to parse 1Password URL: %v\n", err)
 			return secrets.Response{Err: err.Error()}
 		}
 	} else {
@@ -86,13 +86,13 @@ func (driver *OPConnectSecretDriver) Get(req secrets.Request) secrets.Response {
 		var ok bool
 		vault, ok = req.SecretLabels["vault"]
 		if !ok {
-			fmt.Fprintf(os.Stderr, "[OPCSD] driver options must include \"vault\"\n")
+			_, _ = fmt.Fprintf(os.Stderr, "[OPCSD] driver options must include \"vault\"\n")
 			return secrets.Response{Err: `driver options must include "vault"`}
 		}
 
 		item, ok = req.SecretLabels["item"]
 		if !ok {
-			fmt.Fprintf(os.Stderr, "[OPCSD] driver options must include \"item\"\n")
+			_, _ = fmt.Fprintf(os.Stderr, "[OPCSD] driver options must include \"item\"\n")
 			return secrets.Response{Err: `driver options must include "item"`}
 		}
 
@@ -107,17 +107,17 @@ func (driver *OPConnectSecretDriver) Get(req secrets.Request) secrets.Response {
 	// Retrieve the item from the specified vault
 	itemDetails, err := client.GetItem(item, vault)
 	if err != nil {
-		fmt.Errorf("[OPCSD] failed to get item '%s' from vault '%s': %v", item, vault, err)
+		_ = fmt.Errorf("[OPCSD] failed to get item '%s' from vault '%s': %v", item, vault, err)
 		return secrets.Response{Err: fmt.Sprintf("[OPCSD] failed to get item '%s' from vault '%s': %v", item, vault, err)}
 	}
 
 	// First check if the field is a file
 	for _, file := range itemDetails.Files {
 		if file.Name == field {
-			fmt.Fprintf(os.Stdout, "[OPCSD] Found file '%s' in item '%s'\n", field, item)
+			_, _ = fmt.Fprintf(os.Stdout, "[OPCSD] Found file '%s' in item '%s'\n", field, item)
 			fileContent, err := client.GetFileContent(file)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "[OPCSD] failed to get file content: %v\n", err)
+				_, _ = fmt.Fprintf(os.Stderr, "[OPCSD] failed to get file content: %v\n", err)
 				return secrets.Response{Err: fmt.Sprintf("[OPCSD] error getting file '%s' content: %v", field, err)}
 			}
 			return secrets.Response{Value: fileContent}
@@ -127,7 +127,7 @@ func (driver *OPConnectSecretDriver) Get(req secrets.Request) secrets.Response {
 	// If not a file, check fields
 	for _, f := range itemDetails.Fields {
 		if f.Label == field {
-			fmt.Fprintf(os.Stdout, "[OPCSD] Found secret '%s' in item '%s'\n", field, item)
+			_, _ = fmt.Fprintf(os.Stdout, "[OPCSD] Found secret '%s' in item '%s'\n", field, item)
 			return secrets.Response{Value: []byte(f.Value)}
 		}
 	}
@@ -138,14 +138,14 @@ func (driver *OPConnectSecretDriver) Get(req secrets.Request) secrets.Response {
 func main() {
 	driver, err := newDriver()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "[OPCSD] failed to create 1Password Connect Driver: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "[OPCSD] failed to create 1Password Connect Driver: %v\n", err)
 		os.Exit(1)
 	}
 
 	handler := secrets.NewHandler(driver)
 	if err := handler.ServeUnix("/run/docker/plugins/opcsd.sock", 0); err != nil {
-		fmt.Fprintf(os.Stderr, "[OPCSD] error serving plugin: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "[OPCSD] error serving plugin: %v\n", err)
 		os.Exit(1)
 	}
-	fmt.Fprintf(os.Stdout, "[OPCSD] closed\n")
+	_, _ = fmt.Fprintf(os.Stdout, "[OPCSD] closed\n")
 }
