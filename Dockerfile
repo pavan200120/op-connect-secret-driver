@@ -27,5 +27,8 @@ RUN mkdir -p "/run/docker/plugins"  \
 COPY plugin/config.json .
 COPY --from=builder /op-connect-secret-driver /usr/bin/op-connect-secret-driver
 
+# Add execute permissions to the binary
+RUN chmod +x /usr/bin/op-connect-secret-driver
+
 # Command to run the driver
 CMD ["op-connect-secret-driver"]

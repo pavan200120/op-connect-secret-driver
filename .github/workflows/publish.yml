@@ -39,12 +39,14 @@ jobs:
       - name: 'Publish latest'
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
-          docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver" ${PWD}/plugin
+          docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver" plugin
+          docker plugin install "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver"
           docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver"
 
       - name: 'Publish tagged'
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: |
           docker plugin rm "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver" || true
-          docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}" ${PWD}/plugin
+          docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}" plugin
+          docker plugin install "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver"
           docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}"
