@@ -63,17 +63,18 @@ jobs:
       - name: 'Publish latest'
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
-          docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ env.platform_tag }}" plugin
-          docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ env.platform_tag }}"
+#          docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ env.platform_tag }}" plugin
+#          docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ env.platform_tag }}"
           docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:latest" plugin
           docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:latest"
 
       - name: 'Publish tagged'
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: |
-          docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-${{ env.platform_tag }}" plugin
-          docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-${{ env.platform_tag }}"
-          docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}"
+#          docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-${{ env.platform_tag }}" plugin
+#          docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-${{ env.platform_tag }}"
+           docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}" plugin               
+           docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}"
 
   create-github-release:
     runs-on: ubuntu-latest
