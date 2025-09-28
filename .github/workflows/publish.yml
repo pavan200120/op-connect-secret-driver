@@ -91,7 +91,7 @@ jobs:
           REPO=${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver
           
           # Create a manifest list pointing to the two architecture-specific tags
-          docker manifest create $REPO:$TAG \
+          docker manifest create $REPO:latest \
             $REPO:linux-amd64 \
             $REPO:linux-arm64
           
