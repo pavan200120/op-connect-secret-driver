@@ -1,3 +1,6 @@
+# build
+plugin/rootfs/op-connect-secret-driver
+
 # Secret
 data/1password-credentials.json
 
