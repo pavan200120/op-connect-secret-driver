@@ -1,6 +1,8 @@
 # Use a smaller base image for a smaller final image
 FROM golang:1.25-alpine AS builder
 
+ARG VERSION="dev"
+
 WORKDIR /app
 
 RUN mkdir -p /run/docker/plugins
@@ -16,7 +18,12 @@ RUN go mod download
 COPY main.go .
 
 # Build the binary
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /op-connect-secret-driver .
+RUN CGO_ENABLED=0 GOOS=linux \
+    go build \
+    -ldflags="-w -X main.version=${VERSION}" \
+    -a \
+    -installsuffix cgo \
+    -o /op-connect-secret-driver .
 
 # Use a minimal image for the final stage
 FROM gcr.io/distroless/static-debian12 AS runner

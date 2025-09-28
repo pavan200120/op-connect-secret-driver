@@ -31,6 +31,8 @@ services:
     image: op-connect-secret-driver:latest
     build:
       dockerfile: Dockerfile
+      args:
+        VERSION: dev-${USER}
     env_file:
       - .env
     networks:
