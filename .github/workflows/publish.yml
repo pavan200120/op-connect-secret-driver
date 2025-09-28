@@ -21,7 +21,7 @@ jobs:
     strategy:
       matrix:
         platform: [linux/amd64, linux/arm64]
-        
+
     steps:
       - uses: actions/checkout@v5
 
@@ -66,24 +66,60 @@ jobs:
           docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ env.platform_tag }}" plugin
           docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ env.platform_tag }}"
 
-      - name: 'Create manifest list for latest'
-        if: ${{ github.ref == 'refs/heads/main' && matrix.platform == 'linux/amd64' }}
-        run: |
-          docker manifest create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:latest" \
-            "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:linux-amd64" \
-            "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:linux-arm64"
-           docker manifest push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:latest"
-
       - name: 'Publish tagged'
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: |
           docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-${{ env.platform_tag }}" plugin
-          docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-"
+          docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-${{ env.platform_tag }}"
 
-      - name: 'Create manifest list for tagged version'
-        if: ${{ startsWith(github.ref, 'refs/tags/') && matrix.platform == 'linux/amd64' }}
-        run: |
-          docker manifest create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}" \
-            "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-linux-amd64" \
-            "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-linux-arm64"
-           docker manifest push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}"
+  create-github-release:
+    runs-on: ubuntu-latest
+    needs: publish # Ensures this job runs only after the 'publish' job succeeds
+    permissions:
+      contents: write # Required to create a release
+    # This job only needs to run once, not for every platform in the matrix
+    if: ${{ success() }}
+    steps:
+
+      - name: 'Checkout repository'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 'Build Changelog'
+        id: changelog_builder
+        uses: mikepenz/release-changelog-builder-action@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+      - name: 'Create GitHub Release'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          body: |
+            ## What's Changed
+            ${{ steps.changelog_builder.outputs.changelog }}
+            
+            ---
+            
+            ## Installation
+            You can install the plugin directly from Docker Hub with the following command:
+            
+            ```shell
+            docker plugin install ${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }} \
+              --grant-all-permissions \
+              --alias op-connect-secret-driver \
+              --disable
+            ```
+            
+            After installation, remember to enable the plugin:
+            
+            ```shell
+            docker plugin enable ${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}
+            ```
+          draft: false
+          prerelease: false
