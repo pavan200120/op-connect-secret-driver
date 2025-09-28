@@ -3,7 +3,6 @@ name: Build
 on:
   push:
     branches: [ "main" ]
-    tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ "main" ]
 
@@ -77,5 +76,5 @@ jobs:
         with:
           name: plugin-rootfs-${{ env.platform_tag }}
           path: plugin/
-          retention-days: 1
+          retention-days: 7
           if-no-files-found: error

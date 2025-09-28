@@ -1,6 +1,9 @@
 name: Publish
 
 on:
+  push:
+    tags:
+      - 'v*.*.*'
   workflow_run:
     workflows: [ "Build" ]
     branches: [ main ]
@@ -11,7 +14,7 @@ jobs:
   publish:
     name: 'Publish plugin'
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'push' }}
     permissions:
       contents: read
       packages: write
@@ -26,6 +29,40 @@ jobs:
       - name: 'Set environment variables'
         run: |
           echo "platform_tag=$(echo "${{ matrix.platform }}" | tr '/' '-')" >> "$GITHUB_ENV"
+        id: set_vars
+
+      - name: 'Determine Artifact Run ID (for Tag Push)'
+        id: determine_run_id
+        if: ${{ github.event_name == 'push' }} # Only run for tag pushes
+        uses: actions/github-script@v8
+        with:
+          script: |
+            // Search for the most recent successful 'Build' workflow on 'main'
+            const { data: { workflow_runs } } = await github.rest.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'build.yml', // The filename of the workflow
+              branch: 'main',
+              status: 'success',
+              per_page: 1
+            });
+            
+            if (workflow_runs.length > 0) {
+              const runId = workflow_runs[0].id;
+              console.log(`Found successful 'Build' workflow run ID: ${runId}`);
+              core.setOutput('run_id', runId);
+            } else {
+              core.setFailed("Could not find a successful 'Build' workflow run on 'main' to download artifacts from.");
+            }
+          # Inject the GITHUB_TOKEN for the API call
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Set Run ID for Artifact Download'
+        run: |
+          # Use the workflow_run ID if it exists (from the workflow_run trigger)
+          # Otherwise, use the run ID determined in the previous step (from the push tag trigger)
+          RUN_ID="${{ github.event.workflow_run.id || steps.determine_run_id.outputs.run_id }}"
+          echo "artifact_run_id=$RUN_ID" >> $GITHUB_ENV
 
       - name: 'Download artifact'
         uses: actions/download-artifact@v5
@@ -33,7 +70,7 @@ jobs:
           name: plugin-rootfs-${{ env.platform_tag }}
           path: plugin/
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.workflow_run.id }}
+          run-id: ${{ env.artifact_run_id }} # Use the determined run ID
 
       - name: 'Unpack Image Archive'
         run: |
@@ -63,7 +100,7 @@ jobs:
         run: |
           docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ env.platform_tag }}" plugin
           docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ env.platform_tag }}"          
-          
+
       - name: 'Publish tagged'
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: |
@@ -75,7 +112,7 @@ jobs:
     needs: publish
     permissions:
       contents: write # Required to create a release
-    if: ${{ startsWith(github.ref, 'refs/tags/') }}
+    if: ${{ startsWith(github.ref, 'refs/tags/') && success() }}
     steps:
 
       - name: 'Checkout repository'
