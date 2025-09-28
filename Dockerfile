@@ -3,6 +3,8 @@ FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 
+RUN mkdir -p /run/docker/plugins
+
 # Install build dependencies
 RUN apk add --no-cache git
 
@@ -17,18 +19,11 @@ COPY main.go .
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /op-connect-secret-driver .
 
 # Use a minimal image for the final stage
-FROM alpine:latest AS runner
-
-# Add ca-certificates to trust custom CAs if needed
-RUN mkdir -p "/run/docker/plugins"  \
-    && apk --no-cache add ca-certificates
+FROM gcr.io/distroless/static-debian12 AS runner
 
 # Copy the binary from the builder stage
-COPY plugin/config.json .
-COPY --from=builder /op-connect-secret-driver /usr/bin/op-connect-secret-driver
-
-# Add execute permissions to the binary
-RUN chmod +x /usr/bin/op-connect-secret-driver
+COPY --from=builder /op-connect-secret-driver /op-connect-secret-driver
+COPY --from=builder /run/docker/plugins /run/docker/plugins
 
 # Command to run the driver
 CMD ["op-connect-secret-driver"]

@@ -67,7 +67,7 @@ docker plugin remove op-connect-secret-driver:latest > /dev/null 2>&1 || true
 # build
 docker compose build op-connect-secret-driver
 docker compose up -d op-connect-secret-driver
-docker compose cp op-connect-secret-driver:/usr/bin/op-connect-secret-driver plugin/rootfs/usr/bin/op-connect-secret-driver
+docker compose cp op-connect-secret-driver:/op-connect-secret-driver plugin/rootfs/op-connect-secret-driver
 docker compose stop op-connect-secret-driver && docker compose rm -f op-connect-secret-driver
 
 # create

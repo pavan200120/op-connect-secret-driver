@@ -80,14 +80,14 @@ You can also develop, build your own and install it locally.
 ```shell
 docker compose build op-connect-secret-driver
 docker compose up -d op-connect-secret-driver
-docker compose cp op-connect-secret-driver:/usr/bin/op-connect-secret-driver plugin/rootfs/usr/bin/op-connect-secret-driver
+docker compose cp op-connect-secret-driver:/op-connect-secret-driver plugin/rootfs/op-connect-secret-driver
 docker compose stop op-connect-secret-driver && docker compose rm -f op-connect-secret-driver
 ```
 
 ### Alternative: Local Build
 
 ```shell
-go build -o plugin/rootfs/usr/bin/op-connect-secret-driver
+go build -o plugin/rootfs/op-connect-secret-driver
 ```
 
 ## Installation of local build

@@ -2,7 +2,7 @@
   "description": "1Password Connect driver for Docker Secrets",
   "documentation": "https://docs.docker.com/engine/extend/",
   "entrypoint": [
-    "/usr/bin/op-connect-secret-driver"
+    "/op-connect-secret-driver"
   ],
   "interface": {
     "types": [
