@@ -25,27 +25,29 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: 'Set environment variables'
+        run: |
+          echo "platform_tag=$(echo "${{ matrix.platform }}" | tr '/' '-')" >> "$GITHUB_ENV"
+
       - name: 'Download artifact'
         uses: actions/download-artifact@v5
         with:
-          name: plugin-rootfs-${{ matrix.platform }}
+          name: plugin-rootfs-${{ env.platform_tag }}
           path: plugin/
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
 
       - name: 'Unpack Image Archive'
         run: |
-          platform_tag=$(echo "${{ matrix.platform }}" | tr '/' '-')
-          docker load -i plugin/plugin-rootfs-${platform_tag}.tar
+          docker load -i plugin/plugin-rootfs-${{ env.platform_tag }}.tar
 
       - name: 'Create RootFS Directory'
         run: |
-          platform_tag=$(echo "${{ matrix.platform }}" | tr '/' '-')
-          id=$(docker create rootfsimage-${{ matrix.platform }} true)
+          id=$(docker create rootfsimage-${{ env.platform_tag }} true)
           mkdir -p ./plugin/rootfs/
           docker export "$id" | tar -x -C ./plugin/rootfs/
           docker rm -vf "$id"
-          rm plugin/plugin-rootfs-${platform_tag}.tar
+          rm plugin/plugin-rootfs-${{ env.platform_tag }}.tar
 
       - name: 'Log into registry'
         uses: docker/login-action@v3
@@ -61,9 +63,8 @@ jobs:
       - name: 'Publish latest'
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
-          platform_tag=$(echo "${{ matrix.platform }}" | tr '/' '-')
-          docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${platform_tag}" plugin
-          docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${platform_tag}"
+          docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ env.platform_tag }}" plugin
+          docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ env.platform_tag }}"
 
       - name: 'Create manifest list for latest'
         if: ${{ github.ref == 'refs/heads/main' && matrix.platform == 'linux/amd64' }}
@@ -76,8 +77,7 @@ jobs:
       - name: 'Publish tagged'
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: |
-          platform_tag=$(echo "${{ matrix.platform }}" | tr '/' '-')
-          docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-${platform_tag}" plugin
+          docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-${{ env.platform_tag }}" plugin
           docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-"
 
       - name: 'Create manifest list for tagged version'

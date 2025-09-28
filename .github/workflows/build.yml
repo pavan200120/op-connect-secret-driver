@@ -40,9 +40,10 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: 'Extract version'
+      - name: 'Set environment variables'
         run: |
           echo "version=$(git describe --tags --dirty --always --abbrev=12)" >> "$GITHUB_ENV"
+          echo "platform_tag=$(echo "${{ matrix.platform }}" | tr '/' '-')" >> "$GITHUB_ENV"
 
       - name: 'Set up QEMU'
         uses: docker/setup-qemu-action@v3
@@ -59,22 +60,21 @@ jobs:
             VERSION=${{ env.version }}
           push: false
           load: true
-          tags: rootfsimage-${{ matrix.platform }}
+          tags: rootfsimage-${{ env.platform_tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: 'Export rootfs'
         run: |
-          platform_tag=$(echo "${{ matrix.platform }}" | tr '/' '-')
-          id=$(docker create rootfsimage-${{ matrix.platform }} true)
-          mkdir -p ./plugin/rootfs-${platform_tag}/
-          docker save rootfsimage-${{ matrix.platform }} -o plugin/plugin-rootfs-${platform_tag}.tar
+          id=$(docker create rootfsimage-${{ env.platform_tag }} true)
+          mkdir -p ./plugin/rootfs-${{ env.platform_tag }}/
+          docker save rootfsimage-${{ env.platform_tag }} -o plugin/plugin-rootfs-${{ env.platform_tag }}.tar
           docker rm -vf "$id"
 
       - name: 'Upload artifact'
         uses: actions/upload-artifact@v4
         with:
-          name: plugin-rootfs-${{ matrix.platform }}
+          name: plugin-rootfs-${{ env.platform_tag }}
           path: plugin/
           retention-days: 1
           if-no-files-found: error
