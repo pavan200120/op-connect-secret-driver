@@ -65,6 +65,7 @@ jobs:
         run: |
           docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ env.platform_tag }}" plugin
           docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ env.platform_tag }}"
+          docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:latest" plugin
           docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:latest"
 
       - name: 'Publish tagged'
