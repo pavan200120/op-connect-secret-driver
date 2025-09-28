@@ -37,24 +37,26 @@ jobs:
         uses: actions/github-script@v8
         with:
           script: |
-            // Search for the most recent successful 'Build' workflow on 'main'
-            const { data: { workflow_runs } } = await github.rest.actions.listWorkflowRuns({
+            const tagSha = context.sha;
+            console.log(`Searching for successful 'Build' workflow run for commit SHA: ${tagSha}`);
+            
+            // Search for the successful 'Build' workflow run with a matching head_sha
+            const { data: { workflow_runs } } = await github.rest.actions.listWorkflowRunsForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
               workflow_id: 'build.yml', // The filename of the workflow
-              branch: 'main',
+              head_sha: tagSha,
               status: 'success',
               per_page: 1
             });
             
             if (workflow_runs.length > 0) {
               const runId = workflow_runs[0].id;
-              console.log(`Found successful 'Build' workflow run ID: ${runId}`);
+              console.log(`Found matching successful 'Build' workflow run ID: ${runId}`);
               core.setOutput('run_id', runId);
             } else {
-              core.setFailed("Could not find a successful 'Build' workflow run on 'main' to download artifacts from.");
+              core.setFailed("Could not find a successful 'Build' workflow run matching the tag's commit SHA (${tagSha}). Ensure the 'Build' workflow ran successfully for this commit before tagging.");
             }
-          # Inject the GITHUB_TOKEN for the API call
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 'Set Run ID for Artifact Download'
