@@ -69,3 +69,4 @@ jobs:
           name: plugin-rootfs
           path: plugin/
           retention-days: 1
+          if-no-files-found: error

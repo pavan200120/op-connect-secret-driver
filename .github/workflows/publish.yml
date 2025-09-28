@@ -26,6 +26,9 @@ jobs:
         with:
           name: plugin-rootfs
           path: plugin/
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
 
       - name: 'Log into registry'
         uses: docker/login-action@v3
