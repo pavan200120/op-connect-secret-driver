@@ -49,9 +49,9 @@ secrets:
   db_password:
     driver: op-connect-secret-driver
     labels:
-      vault: "your-vault-uuid-or-name"    # Required: Vault UUID or name
-      item: "your-item-uuid-or-name"      # Required: Item UUID or name
-      field: "password"                    # Optional: Defaults to "password"
+      vault: "your-vault-uuid-or-name"             # Required: Vault UUID or name
+      item: "your-item-uuid-or-name"               # Required: Item UUID or name
+      field: "password"                            # Optional: Defaults to "password"
 
 # Option 2: Using 1Password URL reference
 secrets:
