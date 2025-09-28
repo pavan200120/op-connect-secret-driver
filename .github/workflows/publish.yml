@@ -78,21 +78,19 @@ jobs:
     permissions:
       contents: write # Required to create a release
     # This job only needs to run once, not for every platform in the matrix
-    if: ${{ success() }}
+    if: ${{ startsWith(github.ref, 'refs/tags/') && success() }}
     steps:
 
       - name: 'Checkout repository'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: 'Build Changelog'
         id: changelog_builder
-        if: startsWith(github.ref, 'refs/tags/')
         uses: mikepenz/release-changelog-builder-action@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 
       - name: 'Create GitHub Release'
         uses: actions/create-release@v1
