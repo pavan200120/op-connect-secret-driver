@@ -59,12 +59,9 @@ jobs:
       - name: 'Export rootfs'
         run: |
           id=$(docker create rootfsimage true)
-          mkdir -p ./rootfsimage/
-          docker export "$id" | tar -x -C ./rootfsimage/
+          mkdir -p ./plugin/rootfs/
+          docker export "$id" | tar -x -C ./plugin/rootfs/
           docker rm -vf "$id"
-          mv ./rootfsimage/usr/bin/op-connect-secret-driver ./plugin/rootfs/usr/bin/op-connect-secret-driver
-          chmod +x ./plugin/rootfs/usr/bin/op-connect-secret-driver
-          rm -rf ./rootfsimage
 
       - name: 'Upload artifact'
         uses: actions/upload-artifact@v4
