@@ -67,8 +67,17 @@ secrets:
 The CI pipeline automatically builds and publishes the plugin to Docker Hub.
 You can use this command to install the plugin:
 
+### For `linux/amd64`
 ```shell
-docker plugin install clementmouchet/op-connect-secret-driver:latest \
+docker plugin install clementmouchet/op-connect-secret-driver:linux-amd64 \
+--grant-all-permissions \
+--alias op-connect-secret-driver \
+--disable
+```
+
+### For `linux/arm64`
+```shell
+docker plugin install clementmouchet/op-connect-secret-driver:linux-arm64 \
 --grant-all-permissions \
 --alias op-connect-secret-driver \
 --disable

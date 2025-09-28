@@ -73,56 +73,6 @@ jobs:
           docker plugin create "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-${{ env.platform_tag }}" plugin
           docker plugin push "docker.io/${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-${{ env.platform_tag }}"
 
-  create_multi_arch_manifest_for_latest_version:
-    name: 'Latest manifest'
-    runs-on: ubuntu-latest
-    needs: publish
-    if: ${{ success() }}
-    steps:
-      - name: 'Log into registry'
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_TOKEN }}
-
-      - name: 'Create Multi-Arch Plugin Manifest'
-        run: |
-          TAG=${{ github.ref_name }}
-          REPO=${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver
-          
-          # Create a manifest list pointing to the two architecture-specific tags
-          docker manifest create $REPO:latest \
-            $REPO:linux-amd64 \
-            $REPO:linux-arm64
-          
-          # Push the final manifest
-          docker manifest push $REPO:latest
-
-  create_multi_arch_manifest_for_tagged_version:
-    name: 'Tagged manifest'
-    runs-on: ubuntu-latest
-    needs: publish
-    if: ${{ startsWith(github.ref, 'refs/tags/') && success() }}
-    steps:
-      - name: 'Log into registry'
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_TOKEN }}
-
-      - name: 'Create Multi-Arch Plugin Manifest'
-        run: |
-          TAG=${{ github.ref_name }}
-          REPO=${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver
-          
-          # Create a manifest list pointing to the two architecture-specific tags
-          docker manifest create $REPO:$TAG \
-            $REPO:$TAG-linux-amd64 \
-            $REPO:$TAG-linux-arm64
-          
-          # Push the final manifest
-          docker manifest push $REPO:$TAG
-
   create-github-release:
     runs-on: ubuntu-latest
     needs: publish
@@ -158,8 +108,19 @@ jobs:
             ## Installation
             You can install the plugin directly from Docker Hub with the following command:
             
-            ```shell
-            docker plugin install ${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }} \
+            Choose the version based on your platform:
+
+            ### For `linux/amd64`
+            ```bash
+            docker plugin install ${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-linux-amd64 \
+              --grant-all-permissions \
+              --alias op-connect-secret-driver \
+              --disable
+            ```
+            
+            ### For `linux/arm64`
+            ```bash
+            docker plugin install ${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-linux-arm64 \
               --grant-all-permissions \
               --alias op-connect-secret-driver \
               --disable
