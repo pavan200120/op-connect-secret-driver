@@ -1,7 +1,7 @@
 # op-connect-secret-driver
 #### _A Docker Secret driver for [1Password Connect][1PasswordConnectServer]_
 
-This Docker Secret driver plugin integrates with **[1Password Connect server][1PasswordConnectServer** to securely manage secrets in Docker Swarm.
+This Docker Secret driver plugin integrates with **[1Password Connect server][1PasswordConnectServer]** to securely manage secrets in Docker Swarm.
 
 ## Requirements
 
