@@ -63,6 +63,7 @@ jobs:
           docker export "$id" | tar -x -C ./rootfsimage/
           docker rm -vf "$id"
           mv ./rootfsimage/usr/bin/op-connect-secret-driver ./plugin/rootfs/usr/bin/op-connect-secret-driver
+          chmod +x ./plugin/rootfs/usr/bin/op-connect-secret-driver
           rm -rf ./rootfsimage
 
       - name: 'Upload artifact'
