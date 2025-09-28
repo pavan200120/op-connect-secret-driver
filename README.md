@@ -13,7 +13,67 @@ This Docker Secret driver plugin integrates with **[1Password Connect server][1P
 
 > **Note**: Unix socket creation is only supported on Linux and FreeBSD due to limitations in the "go-plugins-helpers" package.
 
+## Configuration
+
+### Connection to 1Password Connect
+
+The SDK requires these environment variables to connect to [1Password Connect][1PasswordConnectServer]:
+
+* `OP_CONNECT_HOST`: URL of your 1Password Connect server
+* `OP_CONNECT_TOKEN`: Your 1Password Connect authentication token
+
+Set them as Docker plugin configuration
+
+```shell
+docker plugin set op-connect-secret-driver:latest OP_CONNECT_HOST=http://localhost:17450 
+docker plugin set op-connect-secret-driver:latest OP_CONNECT_TOKEN=your-1password-connect-token
+```
+
+### Docker Secret Driver Configuration
+
+The plugin supports two ways to reference secrets:
+1. Individual fields using `vault`, `item`, and optional `field` provided as secret labels
+2. [1Password][1Password] URL format using the `ref` as secret label in the format `op://vault/item/field`
+   (that you can copy from [1Password][1Password] directly)
+
+Notes:
+- The `field` parameter is optional and defaults to "password" if not specified
+- The plugin can retrieve both field values and file contents from [1Password][1Password] items
+- All configuration is done through labels
+
+Example Docker Compose configurations:
+
+```yaml
+# Option 1: Using individual fields
+secrets:
+  db_password:
+    driver: op-connect-secret-driver
+    labels:
+      vault: "your-vault-uuid-or-name"    # Required: Vault UUID or name
+      item: "your-item-uuid-or-name"      # Required: Item UUID or name
+      field: "password"                    # Optional: Defaults to "password"
+
+# Option 2: Using 1Password URL reference
+secrets:
+  db_password:
+    driver: op-connect-secret-driver
+    labels:
+      ref: "op://vault-name/item-name/field-name"  # Required: 1Password URL format
+```
+
+
+## Installation from Docker Hub
+
+The CI pipeline automatically builds and publishes the plugin to Docker Hub.
+You can use this command to install the plugin:
+
+```shell
+docker plugin install clementmouchet/op-connect-secret-driver:latest
+```
+
 ## Build
+
+You can also develop, build your own and install it locally.
 
 ### Recommended: Docker Build
 
@@ -30,7 +90,7 @@ docker compose stop op-connect-secret-driver && docker compose rm -f op-connect-
 go build -o plugin/rootfs/usr/bin/op-connect-secret-driver
 ```
 
-## Installation
+## Installation of local build
 
 There's an [install.sh](install.sh) script for this.
 
@@ -73,54 +133,6 @@ To modify plugin code, first remove it, build it and start the installation proc
 
 ```shell
 docker plugin remove op-connect-secret-driver:latest
-```
-
-## Configuration
-
-### Connection to 1Password Connect
-
-The SDK requires these environment variables to connect to [1Password Connect][1PasswordConnectServer]:
-
-* `OP_CONNECT_HOST`: URL of your 1Password Connect server
-* `OP_CONNECT_TOKEN`: Your 1Password Connect authentication token
-
-Set them as Docker plugin configuration
-
-```shell
-docker plugin set op-connect-secret-driver:latest OP_CONNECT_HOST=http://localhost:17450 
-docker plugin set op-connect-secret-driver:latest OP_CONNECT_TOKEN=your-1password-connect-token
-```
-
-### Docker Secret Driver Configuration
-
-The plugin supports two ways to reference secrets:
-1. Individual fields using `vault`, `item`, and optional `field` provided as secret labels
-2. [1Password][1Password] URL format using the `ref` as secret label in the format `op://vault/item/field` 
-  (that you can copy from [1Password][1Password] directly)
-
-Notes:
-- The `field` parameter is optional and defaults to "password" if not specified
-- The plugin can retrieve both field values and file contents from [1Password][1Password] items
-- All configuration is done through labels
-
-Example Docker Compose configurations:
-
-```yaml
-# Option 1: Using individual fields
-secrets:
-  db_password:
-    driver: op-connect-secret-driver
-    labels:
-      vault: "your-vault-uuid-or-name"    # Required: Vault UUID or name
-      item: "your-item-uuid-or-name"      # Required: Item UUID or name
-      field: "password"                    # Optional: Defaults to "password"
-
-# Option 2: Using 1Password URL reference
-secrets:
-  db_password:
-    driver: op-connect-secret-driver
-    labels:
-      ref: "op://vault-name/item-name/field-name"  # Required: 1Password URL format
 ```
 
 ## Troubleshooting
