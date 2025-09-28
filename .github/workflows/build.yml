@@ -60,7 +60,7 @@ jobs:
         run: |
           id=$(docker create rootfsimage true)
           mkdir -p ./plugin/rootfs/
-          docker export "$id" | tar -x -C ./plugin/rootfs/
+          docker save rootfsimage -o plugin/plugin-rootfs.tar
           docker rm -vf "$id"
 
       - name: 'Upload artifact'

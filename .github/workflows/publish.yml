@@ -29,6 +29,17 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
 
+      # Load the image archive saved by 'docker save' back into the Docker daemon
+      - name: 'Unpack Image Archive'
+        run: |
+          docker load -i plugin/plugin-rootfs.tar
+
+      - name: 'Create RootFS Directory'
+        run: |
+          id=$(docker create rootfsimage true)
+          mkdir -p ./plugin/rootfs/
+          docker export "$id" | tar -x -C ./plugin/rootfs/
+          docker rm -vf "$id" plugin/plugin-rootfs.tar
 
       - name: 'Log into registry'
         uses: docker/login-action@v3
