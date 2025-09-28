@@ -186,24 +186,26 @@ jobs:
             Choose the version based on your platform:
 
             ### For `linux/amd64`
-            ```bash
+            ```shell
             docker plugin install ${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-linux-amd64 \
               --grant-all-permissions \
-              --alias op-connect-secret-driver \
+              --alias op-connect-secret-driver:${{ github.ref_name }} \
               --disable
             ```
             
             ### For `linux/arm64`
-            ```bash
+            ```shell
             docker plugin install ${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-linux-arm64 \
               --grant-all-permissions \
-              --alias op-connect-secret-driver \
+              --alias op-connect-secret-driver:${{ github.ref_name }} \
               --disable
             ```
             
-            After installation, remember to enable the plugin:
+            After installation, set the environment variables and enable the plugin:
             
             ```shell
+            docker plugin set op-connect-secret-driver:${{ github.ref_name }} OP_CONNECT_HOST="$OP_CONNECT_HOST"
+            docker plugin set op-connect-secret-driver:${{ github.ref_name }} OP_CONNECT_TOKEN="$OP_CONNECT_TOKEN"
             docker plugin enable ${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}
             ```
           draft: true
