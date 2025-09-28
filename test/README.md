@@ -10,9 +10,8 @@ docker swarm init
 
 See [Get started with a 1Password Connect server](https://developer.1password.com/docs/connect/get-started/)
 
-* 
 
-### Manual secret definition
+### Manual secret definition example
 
 ```shell
 docker secret create \
@@ -23,9 +22,7 @@ docker secret create \
     username
 ```
 
-### 
-
-###
+### Docker Stack example
 
 ```shell
 docker stack deploy -c compose.yml test
