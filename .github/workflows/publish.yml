@@ -75,7 +75,7 @@ jobs:
     needs: publish
     permissions:
       contents: write # Required to create a release
-    if: ${{ startsWith(github.ref, 'refs/tags/') && success() }}
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
     steps:
 
       - name: 'Checkout repository'
