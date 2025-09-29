@@ -189,7 +189,7 @@ jobs:
             
             Choose the version based on your platform:
 
-            ### For `linux/amd64`
+            ### `linux/amd64`
             ```shell
             docker plugin install ${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-linux-amd64 \
               --grant-all-permissions \
@@ -197,7 +197,7 @@ jobs:
               --disable
             ```
             
-            ### For `linux/arm64`
+            ### `linux/arm64`
             ```shell
             docker plugin install ${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}-linux-arm64 \
               --grant-all-permissions \
@@ -205,7 +205,7 @@ jobs:
               --disable
             ```
             
-            After installation, set the environment variables and enable the plugin:
+            ### After installation, set the environment variables and enable the plugin:
             
             ```shell
             docker plugin set op-connect-secret-driver:${{ github.ref_name }} OP_CONNECT_HOST="$OP_CONNECT_HOST"
