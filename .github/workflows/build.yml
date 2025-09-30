@@ -210,7 +210,7 @@ jobs:
             ```shell
             docker plugin set op-connect-secret-driver:${{ github.ref_name }} OP_CONNECT_HOST="$OP_CONNECT_HOST"
             docker plugin set op-connect-secret-driver:${{ github.ref_name }} OP_CONNECT_TOKEN="$OP_CONNECT_TOKEN"
-            docker plugin enable ${{ secrets.DOCKER_USERNAME }}/op-connect-secret-driver:${{ github.ref_name }}
+            docker plugin enable op-connect-secret-driver:${{ github.ref_name }}
             ```
           draft: true
           prerelease: false
