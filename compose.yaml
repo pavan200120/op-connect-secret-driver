@@ -8,22 +8,20 @@ services:
     ports:
       - "17450:8080"
     secrets:
-      - source: 1passwordCredentials
+      - source: 1password_credentials_json
         target: /home/opuser/.op/1password-credentials.json
     networks:
-      overlay_network:
+      op-connect:
     volumes:
       - data:/home/opuser/.op/data
 
   op-connect-sync:
     image: 1password/connect-sync:latest
-    ports:
-      - "17451:8080"
     secrets:
-      - source: 1passwordCredentials
+      - source: 1password_credentials_json
         target: /home/opuser/.op/1password-credentials.json
     networks:
-      overlay_network:
+      op-connect:
     volumes:
       - data:/home/opuser/.op/data
 
@@ -36,18 +34,14 @@ services:
     env_file:
       - .env
     networks:
-      overlay_network:
+      op-connect:
 
 networks:
-  overlay_network:
+  op-connect:
 
 volumes:
   data:
 
 secrets:
-  1passwordCredentials:
+  1password_credentials_json:
     file: data/1password-credentials.json
-  opConnectHost:
-    environment: OP_CONNECT_HOST
-  opConnectToken:
-    environment: OP_CONNECT_TOKEN
